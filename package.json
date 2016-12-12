@@ -11,5 +11,8 @@
     "url": "https://github.com/mpeinado/simple-loader"
   },
   "author": "Marco Peinado",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "qunitjs": "^2.1.0"
+  }
 }
