@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>QUnit basic example</title>
+    <link href="node_modules/qunitjs/qunit/qunit.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <!-- #qunit-fixture required for all QUnit test, even if element is empty. -->
+    <div id="qunit-fixture"></div>
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="js/jquery-simpleLoader.js"></script>
+    <script src="js/script.js"></script>
+
+    <script src="node_modules/qunitjs/qunit/qunit.js"></script>
+    <script>
+        // tell QUnit you're not ready to start right away...
+        QUnit.config.autostart = false;
+
+        $.ajax({
+            url: 'index.html',
+            dataType: 'html',
+            success: function(html) {
+                $('#qunit-fixture').append(html);
+                QUnit.start(); // ...tell QUnit you're ready to go
+            }
+        });
+    </script>
+    <script src="js/loaderTest/loaderUnitTest.js"></script>
+
+
+</body>
+
+</html>

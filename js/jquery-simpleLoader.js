@@ -9,7 +9,106 @@
 * @tutorial - link to tutorial
 * @link - link to another item
 */
-(function($){
+
+    var SimpleLoader = function () {
+	       this.allowedSizes = ["small", "medium", "large"];
+           this.allowedIcons = ["default", "ripple", "gears", "hourglass"];
+    };
+
+    /**
+    * Initializer for SimpleLoader
+    */
+    SimpleLoader.prototype.Init = function () {
+        
+    };
+
+    /**
+    * Append a div with class "show-loading-icon" to the target
+    *   container div. This div will be used as an overlay.
+    * @param target element to append div overlay to
+    */
+    SimpleLoader.prototype.AppendLoadingIconDiv = function($target){
+        $target.append("<div class='show-loading-icon'></div>");
+    };
+
+    /**
+    * Checks if div has postion relative.
+    * @param target element to check postion relative
+    */
+    SimpleLoader.prototype.CheckForRelativePosition = function($target){
+        var isRelative = false;
+        if($target.css("position") == "relative"){
+            isRelative = true;
+        }
+
+        return isRelative;
+    };
+
+    /**
+    * Add relative position to target element.
+    * @param target element to add postion relative
+    */
+    SimpleLoader.prototype.AddRelativePosition = function($target){
+        var isRelative = SimpleLoaderApp.CheckForRelativePosition($target);
+
+        // need to make sure parent has position relative
+        if(!isRelative){
+            $target.css("position", "relative");
+        }
+    };
+
+    /**
+    * Get the Icon Image for the SimpleLoader
+    * @param icon passed in by the user
+    */
+    SimpleLoader.prototype.GetIconImage = function(settingsIcon){
+        // if the user passed in a allowed icon, we use it, else we go with the
+        // default icon
+        var icon = settingsIcon && SimpleLoaderApp.allowedIcons.indexOf(settingsIcon) != -1
+            ? icon = settingsIcon
+            : "default";
+
+        return icon;
+    };
+
+    /**
+    * Get the Icon Size for the SimpleLoader
+    * @param icon size passed in by the user
+    */
+    SimpleLoader.prototype.GetIconSize = function(settingsSize){
+        // if the user passed in a allowed icon size, we use it, else we go with the
+        // default icon sizeSize
+        var iconSize = settingsSize &&  SimpleLoaderApp.allowedSizes.indexOf(settingsSize) != -1
+            ? icon = settingsSize
+            : "medium";
+
+        return iconSize;
+    };
+
+    /**
+    * Build the url for the icon
+    * @param icon image
+    * @param icon size image
+    */
+    SimpleLoader.prototype.GetIconUrl = function(iconImage, iconSize){
+        var iconUrl = "images/" + iconImage + "-" + iconSize +  ".gif";
+
+        return iconUrl;
+    };
+
+    /**
+    * Display the simple loader.
+    * @param $target - element to show loading icon on
+    * @param iconUrl - url for the loading icon
+    */
+    SimpleLoader.prototype.ShowSimpleLoader = function($target, iconUrl){
+        $target.find("div.show-loading-icon").css('background-image', 'url('+ iconUrl +')');
+    };
+
+    // Create SimpleLoaderApp
+    var SimpleLoaderApp =  new SimpleLoader();
+    SimpleLoaderApp.Init();
+
     $.fn.showLoader = function(options){
         // Set defaults
         var settings = $.extend({
@@ -19,32 +118,22 @@
             onComplete: null
         }, options);
 
-        var allowedIcons = ["default", "ripple", "gears", "hourglass"];
-        var allowedSizes = ["small", "medium", "large"];
         return this.each(function(){
-            $(this).append("<div class='show-loading-icon'></div>");
+            SimpleLoaderApp.AppendLoadingIconDiv($(this));
 
-            // need to make sure parent has position relative
-            if($(this).css("position") != "relative"){
-                $(this).css("position", "relative");
-            }
+            SimpleLoaderApp.AddRelativePosition($(this));
 
-            var iconImage = settings.icon &&  allowedIcons.indexOf(settings.icon) != -1
-                ? icon = settings.icon
-                : "default";
+            var iconImage = SimpleLoaderApp.GetIconImage(settings.icon);
 
+            var iconSize = SimpleLoaderApp.GetIconSize(settings.size);
 
-            var sizeSize = settings.size &&  allowedSizes.indexOf(settings.size) != -1
-                ? icon = settings.size
-                : "medium";
+            var iconUrl = SimpleLoaderApp.GetIconUrl(iconImage, iconSize);
 
-            var iconUrl = "images/" + iconImage + "-" + sizeSize +  ".gif";
-
-            $(this).find("div.show-loading-icon").css('background-image', 'url('+ iconUrl +')');
-
-
+            SimpleLoaderApp.ShowSimpleLoader($(this), iconUrl);
 
         });
+
+
     }
 
     $.fn.hideLoader = function(){
@@ -55,4 +144,3 @@
             }
         });
     }
-}(jQuery));
